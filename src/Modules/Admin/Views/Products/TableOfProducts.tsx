@@ -19,9 +19,7 @@ const TableOfProducts = () => {
     () => {
       toast.success("product deleted successfully");
     },
-    () => {
-      toast.error("something went wrong");
-    }
+ 
   );
 
   if (error) {

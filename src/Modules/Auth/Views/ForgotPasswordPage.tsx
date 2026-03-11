@@ -33,9 +33,7 @@ const ForgotPasswordPage = () => {
         search: { message: "verify your email to reset your password" },
       });
     },
-    () => {
-      toast.error("Something went wrong");
-    }
+
   );
 
   const handleSubmit = (data: forgotPasswordValidationType) => {

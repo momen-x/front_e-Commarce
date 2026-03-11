@@ -13,12 +13,7 @@ const TableOfCategories = () => {
     () => {
       toast.success("category deleted successfully");
     },
-    () => {
-      console.error(error);
-      toast.error(
-        error instanceof Error ? error.message : "something went wrong"
-      );
-    }
+
   );
 
   if (error) {

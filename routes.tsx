@@ -1,8 +1,9 @@
-import { createRootRoute, createRoute, Navigate } from "@tanstack/react-router";
+import { createRootRoute, createRoute } from "@tanstack/react-router";
 import { Layout } from "./src/components/layout";
 import Home from "./src/Modules/Home/Views/index";
 import UserProfile from "./src/Modules/profile/Views/index";
-import ChangePassword from './src/Modules/profile/Views/ChangePassword';
+import EditPersonalInfo from "./src/Modules/profile/Views/EditPersonalInfo";
+import ChangePassword from "./src/Modules/profile/Views/ChangePassword";
 import Products from "./src/Modules/Products";
 import Cart from "./src/Modules/Cart/Views/index";
 import SingleProductInfo from "./src/Modules/Products/Views/SingleProductInfo";
@@ -47,6 +48,11 @@ export const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/profile",
   component: UserProfile,
+});
+export const editProfileRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/profile/edit",
+  component: EditPersonalInfo,
 });
 export const ChangePasswordRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -145,6 +151,7 @@ export const routeTree = rootRoute.addChildren([
   productRoute,
   cartRoute,
   profileRoute,
+  editProfileRoute,
   ChangePasswordRoute,
   LoginRoute,
   RegisterRoute,

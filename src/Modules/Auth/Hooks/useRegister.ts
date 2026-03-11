@@ -5,10 +5,10 @@ import {
 } from "@tanstack/react-query";
 import { resAuth } from "../Repo/resAuth";
 import type { registerSchemaInputsType } from "../Validations/Register";
+import { toast } from "react-toastify";
 
 export const useRegister = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, registerSchemaInputsType> => {
   const queryClient = useQueryClient();
 
@@ -19,7 +19,7 @@ export const useRegister = (
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error) => {
-      onError();
+      toast.error(error instanceof Error ? error.message : "error registering");
       console.error("the error is : ", error);
     },
   });

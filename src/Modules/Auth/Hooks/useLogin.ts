@@ -5,10 +5,10 @@ import {
 } from "@tanstack/react-query";
 import type { loginValidationType } from "../Validations/Login";
 import { resAuth } from "../Repo/resAuth";
+import { toast } from "react-toastify";
 
 export const useLogin = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, loginValidationType> => {
   const queryClient = useQueryClient();
 
@@ -17,9 +17,10 @@ export const useLogin = (
     onSuccess: () => {
       onSuccess();
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["last-order"] });
     },
     onError: (error) => {
-      onError();
+      toast.error(error instanceof Error ? error.message : "error logging in");
       console.error("the error is : ", error);
     },
   });

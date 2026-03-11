@@ -1,9 +1,12 @@
 import useProtectedLoggedUserPage from "@/Utils/useProtectedLoggedUserPage";
+import CartPage from "./cartPage";
 
 const Index = () => {
   useProtectedLoggedUserPage();
 
-  return <div>Index</div>;
+  return <div>
+    <CartPage/>
+  </div>;
 };
 
 export default Index;

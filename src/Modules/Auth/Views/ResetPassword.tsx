@@ -30,9 +30,7 @@ const ResetPassword = () => {
       form.reset();
       navigate({ to: "/" });
     },
-    () => {
-      toast.error("Something went wrong");
-    }
+
   );
 
   const handleSubmit = (data: resetPasswordValidationType) => {

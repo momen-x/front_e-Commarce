@@ -11,6 +11,7 @@ import type {
   addCategorySchemaType,
   UpdateCategorySchemaType,
 } from "../Validations/category";
+import { toast } from "react-toastify";
 
 const GET_CATEGORIES_QUERY_KEY = "categories";
 
@@ -37,7 +38,7 @@ export const useGetAllCategories = (): {
 };
 
 export const useGetCategoryById = (
-  id: string
+  id: string,
 ): {
   category: Category | null;
   isLoading: boolean;
@@ -61,7 +62,6 @@ export const useGetCategoryById = (
 
 export const useAddCategory = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, addCategorySchemaType> => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -70,15 +70,16 @@ export const useAddCategory = (
       onSuccess();
       queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES_QUERY_KEY] });
     },
-    onError: () => {
-      onError();
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "error adding category",
+      );
     },
   });
 };
 
 export const useUpdateCategory = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<
   void,
   Error,
@@ -97,15 +98,16 @@ export const useUpdateCategory = (
       onSuccess();
       queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES_QUERY_KEY] });
     },
-    onError: () => {
-      onError();
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "error updating category",
+      );
     },
   });
 };
 
 export const useDeleteCategory = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, string> => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -114,8 +116,10 @@ export const useDeleteCategory = (
       onSuccess();
       queryClient.invalidateQueries({ queryKey: [GET_CATEGORIES_QUERY_KEY] });
     },
-    onError: () => {
-      onError();
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "error deleting category",
+      );
     },
   });
 };

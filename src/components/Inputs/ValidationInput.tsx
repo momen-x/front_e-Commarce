@@ -14,6 +14,7 @@ type Props<T> = {
   fieldTitle: string;
   nameInSchema: keyof T & string;
   className?: string;
+  value?: string;
 } & InputHTMLAttributes<HTMLInputElement>;
 
 export default function ValidationInput<T>({
@@ -34,30 +35,21 @@ export default function ValidationInput<T>({
             {fieldTitle}
           </FormLabel>
           <FormControl>
-            {/* <Input
+            <Input
               id={nameInSchema}
-              className={`w-full max-w-xs disabled:text-blue-500 dark:disabled:text-yellow-300 disabled:opacity-75
-                ${className}
-                    `}
+              className={`w-full max-w-xs disabled:text-blue-500 dark:disabled:text-yellow-300 disabled:opacity-75 ${className}`}
               {...props}
               {...field}
-
-            /> */}
-            <Input
-  id={nameInSchema}
-  className={`w-full max-w-xs disabled:text-blue-500 dark:disabled:text-yellow-300 disabled:opacity-75 ${className}`}
-  {...props}
-  {...field}
-  // override value and onChange for file inputs
-  value={props.type === "file" ? undefined : field.value}
-  onChange={(e) => {
-    if (props.type === "file") {
-      field.onChange(e.target.files?.[0]); // pass the actual File object
-    } else {
-      field.onChange(e);
-    }
-  }}
-/>
+              // override value and onChange for file inputs
+              value={props.type === "file" ? undefined : field.value}
+              onChange={(e) => {
+                if (props.type === "file") {
+                  field.onChange(e.target.files?.[0]);
+                } else {
+                  field.onChange(e);
+                }
+              }}
+            />
           </FormControl>
           <FormMessage />
         </FormItem>

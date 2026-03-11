@@ -11,7 +11,6 @@ const EditCategoryPage = () => {
   const { category, isLoading } = useGetCategoryById(categoryId as string);
   const { mutate: handleUpdateCategory, isPending } = useUpdateCategory(
     () => toast.success("Product updated successfully"),
-    () => toast.error("Something went wrong")
   );
   if (isLoading) return <p>Loading...</p>;
 

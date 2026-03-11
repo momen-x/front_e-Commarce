@@ -5,10 +5,10 @@ import {
 } from "@tanstack/react-query";
 import type { forgotPasswordValidationType } from "../Validations/Password";
 import { resAuth } from "../Repo/resAuth";
+import { toast } from "react-toastify";
 
 export const useForgotPassword = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, forgotPasswordValidationType> => {
   const queryClient = useQueryClient();
 
@@ -20,7 +20,9 @@ export const useForgotPassword = (
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
     onError: (error) => {
-      onError();
+      toast.error(
+        error instanceof Error ? error.message : "error sending email",
+      );
       console.error("the error is : ", error);
     },
   });

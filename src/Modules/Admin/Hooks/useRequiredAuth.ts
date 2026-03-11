@@ -1,5 +1,5 @@
 import { useAuthDialog } from "@/Modules/Auth/Context/AuthDialogContext";
-import { useGetCurrentUser } from "@/Utils/useGetDataForCurrentUser";
+import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 
 export const useRequireAuth = () => {
   const { openAuthDialog } = useAuthDialog();

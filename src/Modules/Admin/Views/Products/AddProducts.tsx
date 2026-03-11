@@ -5,7 +5,6 @@ import ProductForm from "./ProductForm";
 const AddProducts = () => {
   const { mutate: handleAddProduct, isPending } = useAddProduct(
     () => toast.success("Product added successfully"),
-    () => toast.error("Something went wrong")
   );
 
 

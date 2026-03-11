@@ -8,9 +8,7 @@ const AddCategory = () => {
     () => {
       toast.success("Category added successfully");
     },
-    () => {
-      toast.error("Something went wrong");
-    }
+
   );
 
   return (

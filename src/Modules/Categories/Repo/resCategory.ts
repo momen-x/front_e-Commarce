@@ -1,64 +1,37 @@
-import { API_DOMAIN } from "@/Utils/domain";
 import type { Category, ICategoryAPI } from "./Category";
 import type {
   addCategorySchemaType,
   UpdateCategorySchemaType,
 } from "../Validations/category";
+import api from "@/Utils/axiosInstance";
 
-const BASE_URL = `${API_DOMAIN}/categories`;
+const BASE_URL = `/api/categories`;
 
 export const resCategoryAPI: ICategoryAPI = {
   getAll: async () => {
-    const response = await fetch(BASE_URL);
-    if (!response.ok) {
-      throw new Error("Error fetching categories");
-    }
-    const data: Category[] = await response.json();
+    const response = await api.get(BASE_URL);
+
+    const data: Category[] = response.data;
     return data;
   },
   getById: async (id: string) => {
-    const response = await fetch(`${BASE_URL}/${id}`);
-    if (!response.ok) {
-      throw new Error("Error fetching category");
-    }
-    const data: Category = await response.json();
+    const response = await api.get(`${BASE_URL}/${id}`);
+
+    const data: Category = response.data;
     return data;
   },
   create: async (category: addCategorySchemaType) => {
-    const response = await fetch(BASE_URL, {
-      method: "POST",
-      body: JSON.stringify(category),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error add new category");
-    }
+    const response = await api.post(BASE_URL, category);
+    return response.data;
   },
   update: async (id: string, category: UpdateCategorySchemaType) => {
-    const response = await fetch(`${BASE_URL}/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(category),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error update category");
-    }
+    const response = await api.put(`${BASE_URL}/${id}`, category);
+    return response.data;
   },
   delete: async (id: string) => {
-    const response = await fetch(`${BASE_URL}/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error delete category");
-    }
-    const data = await response.json();
+    const response = await api.delete(`${BASE_URL}/${id}`);
+
+    const data = response.data;
     return data;
   },
 };

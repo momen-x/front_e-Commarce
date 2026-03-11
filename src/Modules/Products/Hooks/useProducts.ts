@@ -13,13 +13,14 @@ import type {
 
 import type { Product } from "../Repo/Products";
 import { resProducts } from "../Repo/resProducts";
+import { toast } from "react-toastify";
 
 const GET_PRODUCTS_QUERY_KEY = "products";
 
 export const useFilteringProductsByCategory = (
   categoryId: string,
   page: number,
-  limit?: number
+  limit?: number,
 ): {
   products: Product[] | [];
   isLoading: boolean;
@@ -71,7 +72,7 @@ export const useGetProductsAndPageCount = (): {
 };
 
 export const useGetProductById = (
-  id: string
+  id: string,
 ): {
   product: Product | undefined;
   isLoading: boolean;
@@ -96,7 +97,6 @@ export const useGetProductById = (
 
 export const useAddProduct = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, addProductSchemaType> => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -106,15 +106,16 @@ export const useAddProduct = (
       queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS_QUERY_KEY] });
     },
     onError: (error) => {
-      onError();
       console.error("the error is : ", error);
+      toast.error(
+        error instanceof Error ? error.message : "error adding product",
+      );
     },
   });
 };
 
 export const useUpdateProduct = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<
   void,
   Error,
@@ -128,8 +129,10 @@ export const useUpdateProduct = (
       onSuccess();
       queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS_QUERY_KEY] });
     },
-    onError: () => {
-      onError();
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "error updating product",
+      );
       console.error("the error is : ");
     },
   });
@@ -137,7 +140,6 @@ export const useUpdateProduct = (
 
 export const useDeleteProduct = (
   onSuccess: () => void,
-  onError: () => void
 ): UseMutationResult<void, Error, string> => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -147,7 +149,9 @@ export const useDeleteProduct = (
       queryClient.invalidateQueries({ queryKey: [GET_PRODUCTS_QUERY_KEY] });
     },
     onError: (error) => {
-      onError();
+      toast.error(
+        error instanceof Error ? error.message : "error deleting product",
+      );
       console.error("the error is : ", error);
     },
   });

@@ -12,25 +12,29 @@ import type { Product } from "../Repo/Products";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
 import { useRequireAuth } from "@/Modules/Admin/Hooks/useRequiredAuth";
-// import type { addProductSchemaType } from "../Validations/Products";
+import { useCart } from "@/Modules/Cart/Context/CardContext";
+import { toast } from "react-toastify";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const { requireAuth } = useRequireAuth();
 
-  const addToCart = () => {
-    console.log("yep");
-  };
+const { addToCart } = useCart();
 
-  const handleAddToCart = () => {
-    requireAuth(
-      "Please log in to add items to your cart 🛒",
-      () => {
-        addToCart();
-        console.log("hi eve");
-      }
-      // actual add to cart logic here
-    );
-  };
+const handleAddToCart = () => {
+  requireAuth(
+    "Please log in to add items to your cart 🛒",
+    () => {
+      toast.success("Item added to cart!");
+      addToCart({
+        productId: product._id,       
+        title: product.title,
+        price: product.price,
+        image: product.image?.url,
+        quantity: 1,
+      });
+    }
+  );
+};
 
   const imageUrl =
     product.image?.url ||

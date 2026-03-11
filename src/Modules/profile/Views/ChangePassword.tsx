@@ -10,28 +10,30 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useUpdatePassword } from "../Hooks/useUser";
 import { toast } from "react-toastify";
 import { useNavigate } from "@tanstack/react-router";
+import top from "@/Utils/top";
 const ChangePassword = () => {
+  top();
+
   const form = useForm<ChangePasswordType>({
     mode: "onChange",
     resolver: zodResolver(ChangePasswordValidation),
     defaultValues: {
       oldPassword: "",
       newPassword: "",
-      confirmPassword: "",
+      confirmNewPassword: "",
     },
   });
-  const navigate=useNavigate();
-  const {mutate:handleUpdatePassword} = useUpdatePassword(()=>{
+  const navigate = useNavigate();
+  const { mutate: handleUpdatePassword } = useUpdatePassword(() => {
     toast.success("password updated successfully");
-    navigate({to:"/profile"});
-  },()=>{toast.error("something went wrong")});
+    navigate({ to: "/profile" });
+  });
 
   const handleSubmit = (data: ChangePasswordType) => {
-    console.log("submit : ", data);
     try {
-handleUpdatePassword(data);
+      handleUpdatePassword(data);
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
   };
   return (
@@ -68,7 +70,7 @@ handleUpdatePassword(data);
             <div className="relative">
               <ValidationInput<ChangePasswordType>
                 fieldTitle="Confirm the new password"
-                nameInSchema="confirmPassword"
+                nameInSchema="confirmNewPassword"
                 placeholder="********"
                 type="password"
                 className="h-12 w-full"

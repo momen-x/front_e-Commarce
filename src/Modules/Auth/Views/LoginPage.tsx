@@ -12,7 +12,7 @@ import {
 } from "../Validations/Login";
 import top from "@/Utils/top";
 import useProtectedAuthPages from "@/Utils/useProtectedAuthPages";
-
+//to do , check if the user last order paid or not 
 const LoginPage = () => {
   top();
   useProtectedAuthPages();
@@ -31,10 +31,9 @@ const LoginPage = () => {
       toast.success("Logged in successfully");
       form.reset();
       navigate({ to: "/" });
+ 
     },
-    () => {
-      toast.error("Something went wrong");
-    }
+
   );
 
   const handleSubmit = (data: loginValidationType) => {

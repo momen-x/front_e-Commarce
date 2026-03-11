@@ -14,7 +14,6 @@ const EditProduct = () => {
 
   const { mutate: handleUpdateProduct, isPending } = useUpdateProduct(
     () => toast.success("Product updated successfully"),
-    () => toast.error("Something went wrong")
   );
 
   if (isLoading) return <p>Loading...</p>;

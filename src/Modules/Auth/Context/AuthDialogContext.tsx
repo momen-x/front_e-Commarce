@@ -1,4 +1,3 @@
-// src/context/AuthDialogContext.tsx
 import { createContext, useContext, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {

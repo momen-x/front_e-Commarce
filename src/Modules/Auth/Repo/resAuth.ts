@@ -1,4 +1,3 @@
-import { API_DOMAIN } from "../../../Utils/domain";
 import type { IAuthAPI } from "./Auth";
 import { type loginValidationType } from "../Validations/Login";
 import { type registerSchemaInputsType } from "../Validations/Register";
@@ -6,69 +5,34 @@ import type {
   forgotPasswordValidationType,
   resetPasswordValidationType,
 } from "../Validations/Password";
+import api from "@/Utils/axiosInstance";
 
-const URL = `${API_DOMAIN}/users/auth`;
-
+const BASE_URL = "/api/users/auth";
 export const resAuth: IAuthAPI = {
   login: async (data: loginValidationType) => {
-    const response = await fetch(`${URL}/login`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error login");
-    }
-    const loginDataResponse: { message: string; user: { id: string } } =
-      await response.json();
-    localStorage.setItem("userId", loginDataResponse.user.id);
+    const response = await api.post(`${BASE_URL}/login`, data);
+    return response.data;
   },
   register: async (data: registerSchemaInputsType) => {
-    const response = await fetch(`${URL}/register`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Error register");
-    }
+    const response = await api.post(`${BASE_URL}/register`, data);
+    return response.data;
   },
   logOut: async () => {
-    const response = await fetch(`${URL}/logout`, {
-      method: "GET",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error logout");
-    }
+    const response = await api.get(`${BASE_URL}/logout`);
+    return response.data;
   },
   forgotPassword: async (data: forgotPasswordValidationType) => {
-    const response = await fetch(`${URL}/forgot-password`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Error forgot password");
-    }
+    const response = await api.post(
+      `${BASE_URL}/password/forgot-password`,
+      data,
+    );
+    return response.data;
   },
   resetPassword: async (data: resetPasswordValidationType) => {
-    const response = await fetch(`${URL}/reset-password`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Error reset password");
-    }
+    const response = await api.post(
+      `${BASE_URL}/password/reset-password`,
+      data,
+    );
+    return response.data;
   },
 };

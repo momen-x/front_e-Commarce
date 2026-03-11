@@ -33,7 +33,7 @@ const Index = () => {
   const { products, isLoading, error } = useFilteringProductsByCategory(
     categoryId,
     page,
-    8
+    8,
   );
   const { categories, error: errorCategories } = useGetAllCategories();
   const [count, setCount] = useState(0);
@@ -42,7 +42,7 @@ const Index = () => {
     const fetchCount = async () => {
       if (categoryId !== "All products") {
         const response = await fetch(
-          `http://localhost:5000/api/products/categories/${categoryId}`
+          `http://localhost:5000/api/products/categories/${categoryId}`,
         );
         const data = await response.json();
         setCount(data.pageCount);
@@ -92,8 +92,8 @@ const Index = () => {
                 <Button variant="outline" className="rounded-full">
                   {categoryId === "All products"
                     ? "All products"
-                    : categories.find((c) => c._id === categoryId)?.title ??
-                      "All products"}
+                    : (categories.find((c) => c._id === categoryId)?.title ??
+                      "All products")}
                   <ListFilter />
                 </Button>
               </DropdownMenuTrigger>

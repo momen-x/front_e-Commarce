@@ -1,32 +1,26 @@
-import { API_DOMAIN } from "@/Utils/domain";
 import type { IProductAPI, Product } from "./Products";
 import type {
   addProductSchemaType,
   updateProductSchemaType,
 } from "../Validations/Products";
+import api from "@/Utils/axiosInstance";
 
-const URL = `${API_DOMAIN}/products`;
+const BASE_URL  = `/api/products`;
 
 export const resProducts: IProductAPI = {
   filterByCategory: async (
     categoryId: string,
     page: number,
-    limit?: number
+    limit?: number,
   ) => {
     if (categoryId === "All products") {
-      const response = await fetch(`${URL}?page=${page}&limit=${limit}`);
-      if (!response.ok) {
-        throw new Error("Error fetching products");
-      }
-      const data: Product[] = await response.json();
+      const response = await api.get(`${BASE_URL }?page=${page}&limit=${limit}`);
+
+      const data: Product[] = response.data;
       return data;
     }
 
-    const response = await fetch(`${URL}/categories/${categoryId}`);
-
-    if (!response.ok) {
-      throw new Error("Error fetching products");
-    }
+    const response = await api.get(`${BASE_URL }/categories/${categoryId}`);
     const data: {
       success: boolean;
       count: number;
@@ -36,27 +30,23 @@ export const resProducts: IProductAPI = {
         description: string;
       };
       products: Product[];
-    } = await response.json();
+    } = response.data;
     return data.products;
   },
   getProductAndPageCount: async () => {
-    const response = await fetch(`${URL}/count`);
-    if (!response.ok) {
-      throw new Error("Error fetching products");
-    }
+    const response = await api.get(`${BASE_URL }/count`);
+
     const data: {
       productsCount: number;
       pageCount: number;
-    } = await response.json();
+    } = response.data;
     return data;
   },
 
   getById: async (id: string) => {
-    const response = await fetch(`${URL}/${id}`);
-    if (!response.ok) {
-      throw new Error("Error fetching product");
-    }
-    const data: Product = await response.json();
+    const response = await api.get(`${BASE_URL }/${id}`);
+
+    const data: Product = response.data;
     return data;
   },
 
@@ -69,14 +59,8 @@ export const resProducts: IProductAPI = {
     if (product.image) {
       formData.append("image", product.image); // key must match "image" in photoUpload.single("image")
     }
-    const response = await fetch(URL, {
-      method: "POST",
-      body: formData,
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error add new product");
-    }
+    const response = await api.post(BASE_URL , formData);
+    return response.data;
   },
 
   update: async (id: string, product: updateProductSchemaType) => {
@@ -88,23 +72,12 @@ export const resProducts: IProductAPI = {
     if (product.image) {
       formData.append("image", product.image);
     }
-    const response = await fetch(`${URL}/${id}`, {
-      method: "PUT",
-      body: formData,
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error updating product");
-    }
+    const response = await api.put(`${BASE_URL }/${id}`, formData);
+    return response.data;
   },
 
   delete: async (id: string) => {
-    const response = await fetch(`${URL}/${id}`, {
-      method: "DELETE",
-      credentials: "include",
-    });
-    if (!response.ok) {
-      throw new Error("Error deleting product");
-    }
+    const response = await api.delete(`${BASE_URL }/${id}`);
+    return response.data;
   },
 };

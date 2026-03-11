@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useGetCurrentUser } from "./useGetDataForCurrentUser";
+import { useGetCurrentUser } from "../Modules/profile/Hooks/useGetDataForCurrentUser";
 import { useNavigate } from "@tanstack/react-router";
 
 const useProtectedAuthPages = () => {

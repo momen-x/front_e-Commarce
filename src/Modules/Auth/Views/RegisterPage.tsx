@@ -27,19 +27,14 @@ const RegisterPage = () => {
     },
   });
   const navigate = useNavigate();
-  const { mutate: handleRegister } = useRegister(
-    () => {
-      toast.success("Registered successfully , verify your email");
-      navigate({
-        to: "/verify-email",
-        search: { message: "verify your email to complete your registration" },
-      });
-      form.reset();
-    },
-    () => {
-      toast.error("Something went wrong");
-    }
-  );
+  const { mutate: handleRegister } = useRegister(() => {
+    toast.success("Registered successfully , verify your email");
+    navigate({
+      to: "/verify-email",
+      search: { message: "verify your email to complete your registration" },
+    });
+    form.reset();
+  });
   const handleSubmit = (data: registerValidationType) => {
     try {
       if (data.password === data.confirmPassword) {

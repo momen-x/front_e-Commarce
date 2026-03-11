@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import NavButton from "@/components/ui/NavButton";
 import top from "@/Utils/top";
-import { useGetCurrentUser } from "@/Utils/useGetDataForCurrentUser";
+import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 
 import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import {

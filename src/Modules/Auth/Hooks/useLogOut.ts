@@ -4,9 +4,10 @@ import {
   type UseMutationResult,
 } from "@tanstack/react-query";
 import { resAuth } from "../Repo/resAuth";
+import { toast } from "react-toastify";
 
 export const useLogoutUser = (
-  onSuccess: () => void
+  onSuccess: () => void,
 ): UseMutationResult<void, Error> => {
   const queryClient = useQueryClient();
 
@@ -14,9 +15,10 @@ export const useLogoutUser = (
     mutationFn: () => resAuth.logOut(),
     onSuccess: () => {
       onSuccess();
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
     onError: (error) => {
+      toast.error(error instanceof Error ? error.message : "error logging out");
       console.error("the error is : ", error);
     },
   });

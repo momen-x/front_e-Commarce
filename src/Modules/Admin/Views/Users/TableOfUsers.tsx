@@ -5,14 +5,9 @@ import AdminLayout from "../Layout";
 
 const TableOfUsers = () => {
   const { data: users, error, isLoading } = useGetAllUsers();
-  const { mutateAsync: deleteUser } = useDeleteUser(
-    () => {
-      toast.success("user deleted successfully");
-    },
-    () => {
-      toast.error("something went wrong");
-    },
-  );
+  const { mutateAsync: deleteUser } = useDeleteUser(() => {
+    toast.success("user deleted successfully");
+  });
 
   const handleUserDelete = async (userId: string, isAdmin: boolean) => {
     if (isAdmin) {
