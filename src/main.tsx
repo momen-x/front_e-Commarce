@@ -8,9 +8,15 @@ import { ThemeProvider } from "./Modules/Theme/index.tsx";
 import { ToastContainer } from "react-toastify";
 import { CartProvider } from "./Modules/Cart/Context/CardContext.tsx";
 
+//Stripe payment gateway
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
+
 export const queryClient = new QueryClient({
   defaultOptions: { queries: { refetchOnWindowFocus: false, retry: false } },
 });
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -18,8 +24,10 @@ createRoot(document.getElementById("root")!).render(
       <ReactQueryDevtools position={"bottom"} />
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <CartProvider>
-          <ToastContainer />
-          <App />
+          <Elements stripe={stripePromise}>
+            <ToastContainer />
+            <App />
+          </Elements>
         </CartProvider>
       </ThemeProvider>
     </QueryClientProvider>

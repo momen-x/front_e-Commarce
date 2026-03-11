@@ -1,6 +1,6 @@
 import api from "@/Utils/axiosInstance";
 import { useCart } from "../Context/CardContext";
-import type { CartAPI, Order } from "./Cart";
+import type { CartAPI,  IOrderToAdd } from "./Cart";
 
 const ORDERERS_ITEM_URL = "/api/order-items";
 const ORDERERS_URL = "/api/orders";
@@ -22,21 +22,32 @@ export const useResCart = (): CartAPI => {
       return { ids };
     },
 
-    addOrder: async (order: Order) => {
-      const { address, phone, customerEmail, orderItemsId } = order;
+    addOrder: async (order: IOrderToAdd) => {
+      const { user, address, phone, customerEmail } = order;
+      const orderItemIds = await Promise.all(
+        order.orderItemsId.map(async (item) => {
+          const res = await api.post(ORDERERS_ITEM_URL, {
+            product: item.product,
+            quantity: item.quantity,
+            price: item.price,
+          });
+          return res.data._id;
+        }),
+      );
       const res = await api.post(ORDERERS_URL, {
-        address,
+        orderItemsId: orderItemIds,
+        user,
+        totalPrice: totalPrice,
         phone,
+        address,
         customerEmail,
-        orderItemsId,
-        totalPrice,
         status: "pending",
       });
       clearCart();
       return res.data;
     },
 
-    saveCartOnLogout: async (data: Order) => {
+    saveCartOnLogout: async (data: IOrderToAdd) => {
       const orderItemIds = await Promise.all(
         data.orderItemsId.map(async (item) => {
           const res = await api.post(ORDERERS_ITEM_URL, {
@@ -61,8 +72,12 @@ export const useResCart = (): CartAPI => {
       return orderRes.data;
     },
     getTheLastOrder: async () => {
-      const res=await api.get(`/api/orders/last-order`);
+      const res = await api.get(`/api/orders/last-order`);
       return res.data;
-    }
+    },
+    deleteOrder: async (orderId: string) => {
+      const res = await api.delete(`/api/orders/${orderId}`);
+      return res.data;
+    },
   };
 };

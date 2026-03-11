@@ -27,28 +27,33 @@ const rootRoute = createRootRoute({
   notFoundComponent: NotFoundPage,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const homeRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/",
   component: Home,
 });
+// eslint-disable-next-line react-refresh/only-export-components
 export const productsRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/products",
   component: Products,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const productRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/products/$productId",
   component: SingleProductInfo,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const profileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/profile",
   component: UserProfile,
 });
+// eslint-disable-next-line react-refresh/only-export-components
 export const editProfileRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/profile/edit",
@@ -60,7 +65,8 @@ export const ChangePasswordRoute = createRoute({
   component: ChangePassword,
 });
 
-export const cartRoute = createRootRoute({
+// eslint-disable-next-line react-refresh/only-export-components
+export const cartRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/cart",
   component: Cart,
@@ -87,6 +93,7 @@ export const ResetPasswordRoute = createRoute({
   component: ResetPassword,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const verifyEmailPage = createRoute({
   getParentRoute: () => rootRoute,
   path: "/verify-email",
@@ -145,6 +152,7 @@ export const NotFoundRoute = createRoute({
   component: NotFoundPage,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const routeTree = rootRoute.addChildren([
   homeRoute,
   productsRoute,

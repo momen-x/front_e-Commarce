@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useResCart } from "../Repo/resCart";
-import type { Order } from "../Repo/Cart";
+import type { IOrderToAdd,Order } from "../Repo/Cart";
 import { toast } from "react-toastify";
 
 interface UseSaveOrderProps {
@@ -12,8 +12,8 @@ export const useSaveOrder = ({ onSuccess }: UseSaveOrderProps = {}) => {
   const queryClient = useQueryClient();
   const { saveCartOnLogout } = useResCart();
 
-  return useMutation<void, Error, Order>({
-    mutationFn: (data: Order) => saveCartOnLogout(data),
+  return useMutation<void, Error, IOrderToAdd>({
+    mutationFn: (data: IOrderToAdd) => saveCartOnLogout(data),
     onSuccess: () => {
       // Invalidate queries related to orders to refetch them next time.
       queryClient.invalidateQueries({ queryKey: ["orders"] });

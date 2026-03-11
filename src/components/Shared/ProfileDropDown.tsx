@@ -17,6 +17,14 @@ import { Button } from "../ui/button";
 import { LogOut, User } from "lucide-react";
 import defaultImage from "../../../public/defaultUserImage.png";
 
+interface IItem {
+  productId: string;
+  title: string;
+  price: number;
+  image: string;
+  quantity: number;
+}
+
 export function ProfileDropDown() {
   const { data, isLoading } = useGetCurrentUser();
   const { totalPrice } = useCart();
@@ -67,8 +75,8 @@ export function ProfileDropDown() {
   const handleSaveCart = () => {
     try {
       const cartItems = JSON.parse(localStorage.getItem("cartItems") || "[]");
-      const orderProducts = cartItems.map((item: any, index: number) => {
-        const productId = item.productId || item.id || item._id;
+      const orderProducts = cartItems.map((item: IItem, index: number) => {
+        const productId = item.productId;
         if (!productId) {
           throw new Error(
             `Cart item at index ${index} is missing its product identifier.`,

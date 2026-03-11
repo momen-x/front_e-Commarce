@@ -1,23 +1,28 @@
 import { useState } from "react";
-import { ModeToggle } from "@/Modules/Theme/Views";
-import { NavHeaderArray } from "../../Data/data";
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Menu, X, ShoppingCart } from "lucide-react";
-import { Button } from "../ui/button";
-import { ProfileDropDown } from "./ProfileDropDown";
-import lightLogo from "../../../public/lightLogo.jpeg";
-import DarkLogo from "../../../public/DarkLogo.jpeg";
 import { useTheme } from "@/Modules/Theme";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { ProfileDropDown } from "./ProfileDropDown";
+import { ModeToggle } from "@/Modules/Theme/Views";
+import { Menu, X, ShoppingCart } from "lucide-react";
+import DarkLogo from "../../../public/DarkLogo.jpeg";
+import lightLogo from "../../../public/lightLogo.jpeg";
 import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 import { useCart } from "@/Modules/Cart/Context/CardContext";
-import { Badge } from "../ui/badge";
+import { Link, useNavigate, useLocation } from "@tanstack/react-router"; // Remove useRouter, add useMatch
+import { NavHeaderArray, AdminLinks } from "../../Data/data";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { theme } = useTheme();
   const { totalItems } = useCart();
-  const { data, isLoading } = useGetCurrentUser();
+  const { data: userinfo, isLoading } = useGetCurrentUser();
+  const location = useLocation();
+
+  // Default className from your code
+  const defaultClassName =
+    "flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors duration-200";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -25,7 +30,6 @@ const Header = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex-shrink-0">
             <Link to="/" className="text-xl font-bold text-foreground">
-              {/* <Store className='w-24 h-10' /> */}
               <img
                 src={theme === "light" ? lightLogo : DarkLogo}
                 alt="logo"
@@ -36,23 +40,49 @@ const Header = () => {
 
           <nav className="hidden md:flex items-center space-x-8">
             <ul className="flex space-x-8">
-              {NavHeaderArray.map(({ href, title, Icon }, index) => (
-                <li key={index}>
+              {NavHeaderArray.map(({ href, title, Icon }, index) => {
+                const isActive = location.pathname === href;
+                return (
+                  <li key={index}>
+                    <Link
+                      to={href}
+                      className={`${defaultClassName} ${
+                        isActive
+                          ? "!text-primary font-semibold border-b-2 border-primary"
+                          : ""
+                      } pb-1`}
+                    >
+                      <Icon
+                        className={`w-4 h-4 ${isActive ? "text-primary" : ""}`}
+                      />
+                      <span>{title}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+              {userinfo?.isAdmin && (
+                <li>
                   <Link
-                    to={href}
-                    className="flex items-center space-x-2 text-muted-foreground hover:text-foreground transition-colors duration-200"
+                    to={AdminLinks.href}
+                    className={`${defaultClassName} ${
+                      location.pathname === AdminLinks.href
+                        ? "!text-primary font-semibold border-b-2 border-primary"
+                        : ""
+                    } pb-1`}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{title}</span>
+                    <AdminLinks.Icon
+                      className={`w-4 h-4 ${location.pathname === AdminLinks.href ? "text-primary" : ""}`}
+                    />
+                    <span>{AdminLinks.title}</span>
                   </Link>
                 </li>
-              ))}
+              )}
             </ul>
           </nav>
 
           <div className="flex items-center space-x-4">
             <ModeToggle />
-            {!isLoading && data ? (
+            {!isLoading && userinfo ? (
               <>
                 <div className="relative inline-block">
                   <ShoppingCart
@@ -111,18 +141,46 @@ const Header = () => {
         {isMenuOpen && (
           <nav className="md:hidden py-4 border-t border-border">
             <ul className="flex flex-col space-y-3">
-              {NavHeaderArray.map(({ href, title, Icon }, index) => (
-                <li key={index}>
+              {NavHeaderArray.map(({ href, title, Icon }, index) => {
+                const isActive = location.pathname === href;
+
+                return (
+                  <li key={index}>
+                    <Link
+                      to={href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className={`${defaultClassName} w-full ${
+                        isActive
+                          ? "!text-primary bg-primary/10 border-l-4 border-primary pl-3"
+                          : ""
+                      } py-2 px-4 rounded-r-lg`}
+                    >
+                      <Icon
+                        className={`w-5 h-5 ${isActive ? "text-primary" : ""}`}
+                      />
+                      <span>{title}</span>
+                    </Link>
+                  </li>
+                );
+              })}
+              {userinfo?.isAdmin && (
+                <li>
                   <Link
-                    to={href}
+                    to={AdminLinks.href}
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center space-x-3 px-3 py-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-accent transition-colors duration-200"
+                    className={`${defaultClassName} w-full ${
+                      location.pathname === AdminLinks.href
+                        ? "!text-primary bg-primary/10 border-l-4 border-primary pl-3"
+                        : ""
+                    } py-2 px-4 rounded-r-lg`}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span>{title}</span>
+                    <AdminLinks.Icon
+                      className={`w-5 h-5 ${location.pathname === AdminLinks.href ? "text-primary" : ""}`}
+                    />
+                    <span>{AdminLinks.title}</span>
                   </Link>
                 </li>
-              ))}
+              )}
             </ul>
           </nav>
         )}

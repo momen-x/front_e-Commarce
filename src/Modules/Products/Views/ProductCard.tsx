@@ -1,13 +1,4 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import type { Product } from "../Repo/Products";
 import { ShoppingCart } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
@@ -17,81 +8,82 @@ import { toast } from "react-toastify";
 
 const ProductCard = ({ product }: { product: Product }) => {
   const { requireAuth } = useRequireAuth();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
-const { addToCart } = useCart();
-
-const handleAddToCart = () => {
-  requireAuth(
-    "Please log in to add items to your cart 🛒",
-    () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    requireAuth("Please log in to add items to your cart", () => {
       toast.success("Item added to cart!");
       addToCart({
-        productId: product._id,       
+        productId: product._id,
         title: product.title,
         price: product.price,
         image: product.image?.url,
         quantity: 1,
       });
-    }
-  );
-};
+    });
+  };
 
   const imageUrl =
     product.image?.url ||
     "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop";
-  const navigate = useNavigate();
+
+  const formattedPrice = product.price?.toFixed(2) || "99.99";
+
   return (
-    <Card
-      className="group relative overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer"
-      onClick={() => {
-        navigate({
-          to: "/products/$productId",
-          params: { productId: product._id },
-        });
-      }}
-    >
-      {/* Image Container */}
-      <div className="relative overflow-hidden aspect-[4/3]">
+    <article className="group flex flex-col rounded-lg border border-border bg-card p-3 transition-shadow hover:shadow-md">
+      {/* Image Container - neutral gray background helps unify different image qualities */}
+      <div
+        className="relative aspect-[4/3] overflow-hidden rounded-md bg-neutral-100 cursor-pointer"
+        onClick={() => {
+          navigate({
+            to: "/products/$productId",
+            params: { productId: product._id },
+          });
+        }}
+      >
         <img
           src={imageUrl}
           alt={product.title}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
         />
-
-        {/* Price Tag */}
-        <div className="absolute top-3 right-3">
-          <Badge variant="default" className="bg-blue-600 text-white">
-            ${product.price?.toFixed(2) || "99.99"}
-          </Badge>
-        </div>
       </div>
 
       {/* Content */}
-      <CardHeader className="pb-2">
-        <div className="flex items-center justify-between mb-1">
-          <span className="text-sm text-gray-500 dark:text-gray-400"></span>
-        </div>
-        <CardTitle className="text-lg line-clamp-1">{product.title}</CardTitle>
-        <CardDescription className="line-clamp-2 text-sm">
-          {product.description}
-        </CardDescription>
-      </CardHeader>
-
-      <CardContent className="pb-3"></CardContent>
-
-      <CardFooter>
-        <Button
-          className="w-full gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleAddToCart();
+      <div className="mt-3 flex flex-1 flex-col">
+        <h3
+          className="font-medium text-foreground line-clamp-1 cursor-pointer hover:text-primary transition-colors"
+          onClick={() => {
+            navigate({
+              to: "/products/$productId",
+              params: { productId: product._id },
+            });
           }}
         >
-          <ShoppingCart className="w-4 h-4" />
-          Add to Cart
-        </Button>
-      </CardFooter>
-    </Card>
+          {product.title}
+        </h3>
+        <p className="mt-1 text-sm text-muted-foreground line-clamp-2">
+          {product.description}
+        </p>
+
+        {/* Price and Add to Cart - always visible */}
+        <div className="mt-auto flex items-center justify-between gap-2 pt-3">
+          <span className="text-lg font-semibold text-foreground">
+            ${formattedPrice}
+          </span>
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5"
+            onClick={handleAddToCart}
+          >
+            <ShoppingCart className="size-4" />
+            <span className="hidden sm:inline">Add</span>
+          </Button>
+        </div>
+      </div>
+    </article>
   );
 };
 

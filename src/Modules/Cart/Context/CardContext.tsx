@@ -42,21 +42,33 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     0,
   );
 
+  // const addToCart = (item: CartItem) => {
+  //   setCartItems((prev) => {
+  //     // if item already exists → increase quantity
+  //     const exists = prev.find((i) => i.productId === item.productId);
+  //     if (exists) {
+  //       return prev.map((i) =>
+  //         i.productId === item.productId
+  //           ? { ...i, quantity: i.quantity + 1 }
+  //           : i,
+  //       );
+  //     }
+  //     return [...prev, item];
+  //   });
+  // };
   const addToCart = (item: CartItem) => {
     setCartItems((prev) => {
-      // if item already exists → increase quantity
       const exists = prev.find((i) => i.productId === item.productId);
       if (exists) {
         return prev.map((i) =>
           i.productId === item.productId
-            ? { ...i, quantity: i.quantity + 1 }
+            ? { ...i, quantity: i.quantity + item.quantity } // ← add item.quantity not +1
             : i,
         );
       }
       return [...prev, item];
     });
   };
-
   const removeFromCart = (productId: string) => {
     setCartItems((prev) => prev.filter((i) => i.productId !== productId));
   };
