@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { useNavigate } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
@@ -11,11 +11,14 @@ import {
 } from "../Validations/Password";
 import { useResetPassword } from "../Hooks/useResetPassword";
 import top from "@/Utils/top";
-import useProtectedAuthPages from "@/Utils/useProtectedAuthPages";
+import useProtectedTheAuthPages from "../Utils/useProtectedTheAuthPages";
 
 const ResetPassword = () => {
   top();
-  useProtectedAuthPages();
+  useProtectedTheAuthPages();
+  const { id, token } = useParams({
+    from: "/reset-password/$id/$token",
+  });
   const form = useForm<resetPasswordValidationType>({
     resolver: zodResolver(resetPasswordValidation),
     mode: "onChange",
@@ -24,18 +27,15 @@ const ResetPassword = () => {
     },
   });
   const navigate = useNavigate();
-  const { mutate: handleResetPassword } = useResetPassword(
-    () => {
-      toast.success("your password has been reset successfully");
-      form.reset();
-      navigate({ to: "/" });
-    },
-
-  );
+  const { mutate: handleResetPassword, isPending } = useResetPassword(() => {
+    toast.success("your password has been reset successfully");
+    form.reset();
+    navigate({ to: "/login" });
+  });
 
   const handleSubmit = (data: resetPasswordValidationType) => {
     try {
-      handleResetPassword(data);
+      handleResetPassword({ data, id, token });
     } catch (error) {
       console.error(error);
     }
@@ -67,10 +67,20 @@ const ResetPassword = () => {
                 className="h-12 w-full"
               />
             </div>
+            <div className="relative">
+              <ValidationInput<resetPasswordValidationType>
+                fieldTitle="confirm the password"
+                nameInSchema="confirmPassword"
+                placeholder="enter a strong password"
+                type="password"
+                className="h-12 w-full"
+              />
+            </div>
 
             <Button
               type="submit"
               className="w-full h-11 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white rounded-lg"
+              disabled={!form.formState.isValid || isPending}
             >
               Reset
             </Button>

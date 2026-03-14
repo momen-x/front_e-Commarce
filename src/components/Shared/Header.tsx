@@ -10,7 +10,27 @@ import lightLogo from "../../../public/lightLogo.jpeg";
 import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 import { useCart } from "@/Modules/Cart/Context/CardContext";
 import { Link, useNavigate, useLocation } from "@tanstack/react-router"; // Remove useRouter, add useMatch
-import { NavHeaderArray, AdminLinks } from "../../Data/data";
+import { NavHeaderArray, AdminLinks, UserOrderLinks } from "../../Data/data";
+
+const NavOrder = () => {
+  return (
+    <li>
+      <Link
+        to={UserOrderLinks.href}
+        className={`${UserOrderLinks.className} ${
+          location.pathname === UserOrderLinks.href
+            ? "!text-primary font-semibold border-b-2 border-primary"
+            : ""
+        } pb-1`}
+      >
+        <UserOrderLinks.Icon
+          className={`w-4 h-4 ${location.pathname === UserOrderLinks.href ? "text-primary" : ""}`}
+        />
+        <span>{UserOrderLinks.title}</span>
+      </Link>
+    </li>
+  );
+};
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,6 +80,7 @@ const Header = () => {
                   </li>
                 );
               })}
+              {!isLoading && userinfo && <NavOrder />}
               {userinfo?.isAdmin && (
                 <li>
                   <Link
@@ -163,6 +184,7 @@ const Header = () => {
                   </li>
                 );
               })}
+              {!isLoading && userinfo && <NavOrder />}
               {userinfo?.isAdmin && (
                 <li>
                   <Link

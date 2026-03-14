@@ -28,9 +28,13 @@ export const resAuth: IAuthAPI = {
     );
     return response.data;
   },
-  resetPassword: async (data: resetPasswordValidationType) => {
+  resetPassword: async (
+    data: resetPasswordValidationType,
+    id: string,
+    token: string,
+  ) => {
     const response = await api.post(
-      `${BASE_URL}/password/reset-password`,
+      `${BASE_URL}/password/reset-password/${id}/${token}`,
       data,
     );
     return response.data;

@@ -1,37 +1,49 @@
+import { useEffect, useState } from "react";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import PaymentForm from "../../Payment/Views/PaymentForm";
-import { ShoppingBag, MapPin, Phone, Mail, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { toast } from "react-toastify";
-import { useState } from "react";
+import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 import { useCart } from "../Context/CardContext";
-import { useResCart } from "../Repo/resCart";
+import { useAddOrder } from "../Hooks/useOrder";
+
+import { Form } from "@/components/ui/form";
+import ValidationInput from "@/components/Inputs/ValidationInput";
+
+import PaymentForm from "../../Payment/Views/PaymentForm";
+import { ShoppingBag, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { toast } from "react-toastify";
+
 import {
   checkoutSchema,
   type CheckoutSchemaType,
 } from "../Validations/checkOut";
-import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 import { Link } from "@tanstack/react-router";
 import CartItem from "./CartItem";
 
 const CartPage = () => {
   const { cartItems, totalPrice } = useCart();
   const { data: currentUser } = useGetCurrentUser();
-  const { addOrder } = useResCart();
-  const [orderId, setOrderId] = useState<string | null>(null); // ← only this
+  const { mutateAsync: addOrder, isPending: isSubmitting } = useAddOrder();
+  const [orderId, setOrderId] = useState<string | null>(null);
   const shipping = totalPrice > 50 ? 0 : 9.99;
   const grandTotal = totalPrice + shipping;
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<CheckoutSchemaType>({
+  const form = useForm<CheckoutSchemaType>({
     resolver: zodResolver(checkoutSchema),
+    defaultValues: {
+      customerEmail: currentUser?.email || "",
+      phone: "",
+      address: "",
+    },
+    mode: "onChange",
   });
+
+  useEffect(() => {
+    if (currentUser) {
+      form.setValue("customerEmail", currentUser.email);
+    }
+  }, [currentUser]);
 
   const onSubmit = async (data: CheckoutSchemaType) => {
     try {
@@ -48,7 +60,6 @@ const CartPage = () => {
       });
 
       if (order._id) setOrderId(order._id);
-      toast.success("Order placed successfully!");
     } catch {
       toast.error("Something went wrong, please try again.");
     }
@@ -60,7 +71,6 @@ const CartPage = () => {
         orderId={orderId}
         onSuccess={() => {
           setOrderId(null);
-          // navigate to success page or home
         }}
       />
     );
@@ -176,91 +186,62 @@ const CartPage = () => {
                 <h2 className="font-semibold text-gray-900 dark:text-white mb-5">
                   Delivery Info
                 </h2>
-                <form
-                  onSubmit={handleSubmit(onSubmit)}
-                  className="flex flex-col gap-4"
-                  noValidate
-                >
-                  {/* Email */}
-                  <div className="flex flex-col gap-1.5">
-                    <Label
-                      htmlFor="customerEmail"
-                      className="flex items-center gap-1.5"
-                    >
-                      <Mail size={14} /> Email
-                    </Label>
-                    <Input
-                      id="customerEmail"
-                      type="email"
-                      placeholder="you@example.com"
-                      {...register("customerEmail")}
-                      className={errors.customerEmail ? "border-red-500" : ""}
-                    />
-                    {errors.customerEmail && (
-                      <p className="text-xs text-red-500">
-                        {errors.customerEmail.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Phone */}
-                  <div className="flex flex-col gap-1.5">
-                    <Label
-                      htmlFor="phone"
-                      className="flex items-center gap-1.5"
-                    >
-                      <Phone size={14} /> Phone
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+970 599 000 000"
-                      {...register("phone")}
-                      className={errors.phone ? "border-red-500" : ""}
-                    />
-                    {errors.phone && (
-                      <p className="text-xs text-red-500">
-                        {errors.phone.message}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Address */}
-                  <div className="flex flex-col gap-1.5">
-                    <Label
-                      htmlFor="address"
-                      className="flex items-center gap-1.5"
-                    >
-                      <MapPin size={14} /> Address
-                    </Label>
-                    <Input
-                      id="address"
-                      type="text"
-                      placeholder="Street, City, Country"
-                      {...register("address")}
-                      className={errors.address ? "border-red-500" : ""}
-                    />
-                    {errors.address && (
-                      <p className="text-xs text-red-500">
-                        {errors.address.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full mt-2 gap-2"
+                <Form {...form}>
+                  <form
+                    onSubmit={form.handleSubmit(onSubmit)}
+                    className="flex flex-col gap-4"
+                    noValidate
                   >
-                    {isSubmitting ? (
-                      "Placing Order..."
-                    ) : (
-                      <>
-                        Place Order <ChevronRight size={16} />
-                      </>
-                    )}
-                  </Button>
-                </form>
+                    {/* Email */}
+
+                    <div>
+                      <ValidationInput<CheckoutSchemaType>
+                        fieldTitle="Enter email"
+                        nameInSchema="customerEmail"
+                        placeholder="example@example.com"
+                        type="email"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                        disabled
+                      />
+                    </div>
+
+                    {/* Phone */}
+                    <div className="flex flex-col gap-1.5">
+                      <ValidationInput<CheckoutSchemaType>
+                        fieldTitle="Enter your phone number"
+                        nameInSchema="phone"
+                        placeholder="e.g., +1234567890"
+                        type="text"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      />
+                    </div>
+
+                    {/* Address */}
+                    <div className="flex flex-col gap-1.5">
+                      <ValidationInput<CheckoutSchemaType>
+                        fieldTitle="Enter your address"
+                        nameInSchema="address"
+                        placeholder="e.g.,Street 123, City, Country"
+                        type="text"
+                        className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                      />
+                    </div>
+
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !form.formState.isValid}
+                      className="w-full mt-2 gap-2"
+                    >
+                      {isSubmitting ? (
+                        "Placing Order..."
+                      ) : (
+                        <>
+                          Place Order <ChevronRight size={16} />
+                        </>
+                      )}
+                    </Button>
+                  </form>
+                </Form>
               </div>
             </div>
           </div>

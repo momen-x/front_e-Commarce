@@ -1,8 +1,8 @@
 import z from "zod";
 
 export const updatePasswordValidation = z.object({
-  oldPassword: z.string().min(6),
-  newPassword: z.string().min(6),
+  oldPassword: z.string().min(8),
+  newPassword: z.string().min(8),
 });
 
 export const forgotPasswordValidation = z.object({
@@ -10,8 +10,8 @@ export const forgotPasswordValidation = z.object({
 });
 
 export const resetPasswordValidation = z.object({
-  password: z.string().min(6),
-  confirmPassword: z.string().min(6),
+  password: z.string().min(8),
+  confirmPassword: z.string().min(8),
 });
 
 export type updatePasswordValidationType = z.infer<

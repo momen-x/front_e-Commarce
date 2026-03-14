@@ -3,31 +3,37 @@ import { useParams, useNavigate } from "@tanstack/react-router";
 import api from "@/Utils/axiosInstance";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
 import top from "@/Utils/top";
 import useProtectedTheAuthPages from "../Utils/useProtectedTheAuthPages";
 
-const VerifyEmailPage = () => {
+const VerificationResetPasswordEmailPage = () => {
   top();
   useProtectedTheAuthPages();
-  const { token } = useParams({ from: "/verify-email/$token" });
+  const { token, id } = useParams({
+    from: "/password/verify-email/$id/$token",
+  });
   const navigate = useNavigate();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
   );
 
-  useEffect(() => {
-    const verify = async () => {
-      try {
-        await api.get(`/api/users/auth/verify/${token}`);
-        toast.success("Email verified successfully! You can now login 🎉");
-        navigate({ to: "/login" });
-      } catch {
+useEffect(() => {
+
+  const verify = async () => {
+    try {
+      const response = await api.get(`api/users/auth/password/verify/${id}/${token}`);
+      // Check if verification was successful
+      if (response.data.canProceed || response.status === 200) {
+        setStatus("success");
+      } else {
         setStatus("error");
       }
-    };
-    verify();
-  }, [token]);
+    } catch {
+      setStatus("error");
+    }
+  };
+  verify();
+}, [token, id]);
 
   if (status === "loading") {
     return (
@@ -55,8 +61,15 @@ const VerifyEmailPage = () => {
           <p className="text-gray-500 dark:text-gray-400">
             Your email has been verified successfully.
           </p>
-          <Button onClick={() => navigate({ to: "/login" })}>
-            Go to Login
+          <Button
+            onClick={() =>
+              navigate({
+                to: "/reset-password/$id/$token",
+                params: { id, token },
+              })
+            }
+          >
+            Go to reset password page
           </Button>
         </div>
       </div>
@@ -75,12 +88,10 @@ const VerifyEmailPage = () => {
         <p className="text-gray-500 dark:text-gray-400">
           Link is invalid or expired.
         </p>
-        <Button onClick={() => navigate({ to: "/register" })}>
-          Register Again
-        </Button>
+        <Button onClick={() => navigate({ to: "/login" })}>try again</Button>
       </div>
     </div>
   );
 };
 
-export default VerifyEmailPage;
+export default VerificationResetPasswordEmailPage;

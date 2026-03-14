@@ -103,7 +103,6 @@ pnpm install
 cp .env.example .env
 
 VITE_APIS_DOMAIN=your_api_url
-<!-- JWT_SECRET_KEY=HasanIsPlayingFootballWithHerDaughterAndHeIsNeverGoingToSleepWithWomanEver -->
 VITE_STRIPE_PUBLIC_KEY=your_stripe_publishable_key
 
 npm run dev

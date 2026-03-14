@@ -8,19 +8,43 @@ import { toast } from "react-toastify";
 import AdminLayout from "../Layout";
 import UpdateBtn from "@/components/UpdateBtn";
 
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { useEffect, useState } from "react";
+
+const scrollTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+
 const TableOfProducts = () => {
   const { products, error, isLoading } = useFilteringProductsByCategory(
     "All products",
     1,
-    10
+    10,
   );
   const { productsCount } = useGetProductsAndPageCount();
-  const { mutateAsync: handleDeleteProduct } = useDeleteProduct(
-    () => {
-      toast.success("product deleted successfully");
-    },
- 
-  );
+  const { mutateAsync: handleDeleteProduct } = useDeleteProduct(() => {
+    toast.success("product deleted successfully");
+  });
+
+  const [count, setCount] = useState(0);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const response = await fetch("http://localhost:5000/api/products/count");
+      const data = await response.json();
+      setCount(data.pageCount);
+      return;
+    };
+    fetchCount();
+  }, []);
 
   if (error) {
     return <p>somethings went wrong</p>;
@@ -130,7 +154,7 @@ const TableOfProducts = () => {
                               day: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
-                            }
+                            },
                           )}
                         </td>
                         <td className="flex gap-4 px-6 py-4">
@@ -155,6 +179,56 @@ const TableOfProducts = () => {
             </div>
           </div>
         </div>
+        {count > 1 && (
+          <Pagination className="mt-8">
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (page > 1) setPage(page - 1);
+                    scrollTop();
+                  }}
+                  className={
+                    page === 1
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+
+              {Array.from({ length: count }, (_, i) => i + 1).map((pageNum) => (
+                <PaginationItem key={pageNum} className="cursor-pointer">
+                  <PaginationLink
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setPage(pageNum);
+                      scrollTop();
+                    }}
+                    isActive={page === pageNum}
+                  >
+                    {pageNum}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
+
+              <PaginationItem>
+                <PaginationNext
+                  onClick={(e) => {
+                    e.preventDefault();
+                    if (page < count) setPage(page + 1);
+                    scrollTop();
+                  }}
+                  className={
+                    page === count
+                      ? "pointer-events-none opacity-50"
+                      : "cursor-pointer"
+                  }
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        )}
       </main>
     </AdminLayout>
   );

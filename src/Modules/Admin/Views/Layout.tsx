@@ -14,6 +14,7 @@ import {
   ScanBarcode,
   ChartBarStacked,
   Table,
+  SendToBack,
 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { DeleteProvider } from "../Context/DeleteBtnContext";
@@ -24,6 +25,7 @@ interface DashboardLayoutProps {
 
 const pages = [
   { icon: Users, label: "Users", path: "/admin/users" },
+  { icon: SendToBack , label: "Orders", path: "/admin/orders" },
   { icon: Target, label: "Add Product", path: "/admin/products" },
   { icon: ScanBarcode, label: "Products Table", path: "/admin/products-table" },
   { icon: ChartBarStacked, label: "Add Category", path: "/admin/categories" },

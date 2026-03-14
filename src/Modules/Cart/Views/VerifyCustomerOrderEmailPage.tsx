@@ -1,33 +1,51 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "@tanstack/react-router";
 import api from "@/Utils/axiosInstance";
 import { Loader2, CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
-import top from "@/Utils/top";
-import useProtectedTheAuthPages from "../Utils/useProtectedTheAuthPages";
+import PaymentForm from "@/Modules/Payment/Views/PaymentForm";
 
-const VerifyEmailPage = () => {
-  top();
-  useProtectedTheAuthPages();
-  const { token } = useParams({ from: "/verify-email/$token" });
+const VerifyCustomerOrderEmailPage = () => {
+  const { token, id, orderData } = useParams({
+    from: "/orders/verify-email/$id/$token/$orderData",
+  });
   const navigate = useNavigate();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
     "loading",
   );
+  const [orderId, setOrderId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const handleSubmit = async () => {
     const verify = async () => {
       try {
-        await api.get(`/api/users/auth/verify/${token}`);
-        toast.success("Email verified successfully! You can now login 🎉");
-        navigate({ to: "/login" });
+        //api/orders/verify-email/:id/:token/:dataOrder
+        const response = await api.get(
+          `api/orders/verify-email/${id}/${token}/${orderData}`,
+        );
+        // Check if verification was successful
+        if (response.data.canProceed || response.status === 200) {
+          setStatus("success");
+          setOrderId(response.data.orderData._id);
+        } else {
+          setStatus("error");
+        }
       } catch {
         setStatus("error");
       }
     };
     verify();
-  }, [token]);
+  };
+
+  if (orderId) {
+    return (
+      <PaymentForm
+        orderId={orderId}
+        onSuccess={() => {
+          setOrderId(null);
+        }}
+      />
+    );
+  }
 
   if (status === "loading") {
     return (
@@ -55,8 +73,12 @@ const VerifyEmailPage = () => {
           <p className="text-gray-500 dark:text-gray-400">
             Your email has been verified successfully.
           </p>
-          <Button onClick={() => navigate({ to: "/login" })}>
-            Go to Login
+          <Button
+            onClick={() => {
+              handleSubmit();
+            }}
+          >
+            Go to reset password page
           </Button>
         </div>
       </div>
@@ -75,12 +97,10 @@ const VerifyEmailPage = () => {
         <p className="text-gray-500 dark:text-gray-400">
           Link is invalid or expired.
         </p>
-        <Button onClick={() => navigate({ to: "/register" })}>
-          Register Again
-        </Button>
+        <Button onClick={() => navigate({ to: "/login" })}>try again</Button>
       </div>
     </div>
   );
 };
 
-export default VerifyEmailPage;
+export default VerifyCustomerOrderEmailPage;

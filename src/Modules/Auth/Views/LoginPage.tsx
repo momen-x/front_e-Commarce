@@ -1,5 +1,5 @@
 import { toast } from "react-toastify";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
@@ -11,12 +11,19 @@ import {
   type loginValidationType,
 } from "../Validations/Login";
 import top from "@/Utils/top";
-import useProtectedAuthPages from "@/Utils/useProtectedAuthPages";
-//to do , check if the user last order paid or not 
+import { useEffect } from "react";
+import useProtectedTheAuthPages from "../Utils/useProtectedTheAuthPages";
+//to do , check if the user last order paid or not
 const LoginPage = () => {
   top();
-  useProtectedAuthPages();
+  useProtectedTheAuthPages();
+  const { verified } = useSearch({ from: "/login" }) as { verified?: string };
 
+  useEffect(() => {
+    if (verified) {
+      toast.success("Email verified successfully! You can now login 🎉");
+    }
+  }, []);
   const form = useForm<loginValidationType>({
     resolver: zodResolver(loginValidation),
     mode: "onChange",
@@ -26,15 +33,12 @@ const LoginPage = () => {
     },
   });
   const navigate = useNavigate();
-  const { mutate: handleLogin } = useLogin(
-    () => {
-      toast.success("Logged in successfully");
-      form.reset();
-      navigate({ to: "/" });
- 
-    },
-
-  );
+  const { mutate: handleLogin, isPending } = useLogin(() => {
+    toast.success("Logged in successfully");
+    form.reset();
+    navigate({ to: "/" });
+    location.reload();
+  });
 
   const handleSubmit = (data: loginValidationType) => {
     try {
@@ -93,6 +97,7 @@ const LoginPage = () => {
             <Button
               type="submit"
               className="w-full h-11 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white rounded-lg"
+              disabled={isPending || !form.formState.isValid}
             >
               Sign in
             </Button>

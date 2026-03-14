@@ -5,10 +5,13 @@ import { toast } from "react-toastify";
 
 export const useResetPassword = (
   onSuccess: () => void,
-): UseMutationResult<void, Error, resetPasswordValidationType> => {
+): UseMutationResult<
+  void,
+  Error,
+  { data: resetPasswordValidationType; id: string; token: string }
+> => {
   return useMutation({
-    mutationFn: (data: resetPasswordValidationType) =>
-      resAuth.resetPassword(data),
+    mutationFn: ({ data, id, token }) => resAuth.resetPassword(data, id, token),
     onSuccess: () => {
       onSuccess();
     },

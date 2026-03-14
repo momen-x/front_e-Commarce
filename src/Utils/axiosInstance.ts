@@ -12,11 +12,12 @@ api.interceptors.response.use(
   (error) => {
     if (
       error.response?.status === 401 &&
-      window.location.pathname !== "/login"
+      window.location.pathname !== "/login" &&
+      window.location.pathname.startsWith("/admin")
     ) {
       // Clear user cache
       queryClient.removeQueries({ queryKey: ["me"] });
-      // Redirect to login
+      // Redirect to login only for admin pages
       window.location.href = "/login";
     }
     return Promise.reject(error);

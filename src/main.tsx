@@ -25,7 +25,7 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <CartProvider>
           <Elements stripe={stripePromise}>
-            <ToastContainer />
+            <ToastContainer position="bottom-right" />
             <App />
           </Elements>
         </CartProvider>

@@ -1,6 +1,5 @@
 import { Camera, Lock, Trash2, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import useProtectedLoggedUserPage from "@/Utils/useProtectedLoggedUserPage";
 import { useGetCurrentUser } from "@/Modules/profile/Hooks/useGetDataForCurrentUser";
 import { useNavigate } from "@tanstack/react-router";
 import { useUploadImage } from "../Hooks/useUser";
@@ -18,7 +17,6 @@ const UserProfilePage = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useProtectedLoggedUserPage();
   const navigate = useNavigate();
 
   const { mutate: handleUploadImage, isPending } = useUploadImage(() => {

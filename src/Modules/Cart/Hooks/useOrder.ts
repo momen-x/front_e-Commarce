@@ -1,6 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  type UseMutationResult,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useResCart } from "../Repo/resCart";
-import type { IOrderToAdd,Order } from "../Repo/Cart";
+import type { IOrderToAdd, Order } from "../Repo/Cart";
 import { toast } from "react-toastify";
 
 interface UseSaveOrderProps {
@@ -40,7 +45,6 @@ export const useGetLastOrder = (): {
   data: Order | undefined;
   isLoading: boolean;
   isError: boolean;
-  
 } => {
   const { getTheLastOrder } = useResCart();
   const { data, isLoading, isError } = useQuery({
@@ -54,4 +58,23 @@ export const useGetLastOrder = (): {
     isLoading,
     isError,
   };
+};
+
+export const useAddOrder = (
+): UseMutationResult<Order, Error, IOrderToAdd> => {
+  const { addOrder } = useResCart();
+
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: IOrderToAdd) => addOrder(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["last-order"] });
+    },
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "error adding order",
+      );
+      console.error("the error is : ", error);
+    },
+  });
 };

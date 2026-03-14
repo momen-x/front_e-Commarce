@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "@tanstack/react-router";
+// import { useNavigate } from "@tanstack/react-router";
 import { Form } from "@/components/ui/form";
 import ValidationInput from "@/components/Inputs/ValidationInput";
 import { Button } from "@/components/ui/button";
@@ -11,11 +11,11 @@ import {
 } from "../Validations/Password";
 import { useForgotPassword } from "../Hooks/useForgotPassword";
 import top from "@/Utils/top";
-import useProtectedAuthPages from "@/Utils/useProtectedAuthPages";
+import useProtectedTheAuthPages from "../Utils/useProtectedTheAuthPages";
 
 const ForgotPasswordPage = () => {
   top();
-  useProtectedAuthPages();
+  useProtectedTheAuthPages();
   const form = useForm<forgotPasswordValidationType>({
     resolver: zodResolver(forgotPasswordValidation),
     mode: "onChange",
@@ -23,18 +23,11 @@ const ForgotPasswordPage = () => {
       email: "",
     },
   });
-  const navigate = useNavigate();
-  const { mutate: handleForgotPassword } = useForgotPassword(
-    () => {
-      toast.success("verify your email to reset your password");
-      form.reset();
-      navigate({
-        to: "/verify-email",
-        search: { message: "verify your email to reset your password" },
-      });
-    },
-
-  );
+  // const navigate = useNavigate();
+  const { mutate: handleForgotPassword, isPending } = useForgotPassword(() => {
+    toast.success("verify your email to reset your password 🎉 !!");
+    form.reset();
+  });
 
   const handleSubmit = (data: forgotPasswordValidationType) => {
     try {
@@ -74,6 +67,7 @@ const ForgotPasswordPage = () => {
             <Button
               type="submit"
               className="w-full h-11 bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-slate-200 dark:text-slate-900 text-white rounded-lg"
+              disabled={!form.formState.isValid || isPending}
             >
               verify
             </Button>

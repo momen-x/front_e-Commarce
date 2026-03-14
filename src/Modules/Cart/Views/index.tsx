@@ -1,12 +1,15 @@
-import useProtectedLoggedUserPage from "@/Utils/useProtectedLoggedUserPage";
+import { useProtectedUnLoggedPage } from "@/Modules/Auth/Hooks/useProtectedUnLoggedPage";
 import CartPage from "./cartPage";
 
-const Index = () => {
-  useProtectedLoggedUserPage();
 
-  return <div>
-    <CartPage/>
-  </div>;
+const Index = () => {
+useProtectedUnLoggedPage();
+
+  return (
+    <div>
+      <CartPage />
+    </div>
+  );
 };
 
 export default Index;

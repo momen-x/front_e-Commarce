@@ -1,12 +1,12 @@
 import api from "@/Utils/axiosInstance";
 import { useCart } from "../Context/CardContext";
-import type { CartAPI,  IOrderToAdd } from "./Cart";
+import type { CartAPI, IOrderToAdd } from "./Cart";
 
 const ORDERERS_ITEM_URL = "/api/order-items";
 const ORDERERS_URL = "/api/orders";
 
 export const useResCart = (): CartAPI => {
-  const { cartItems, totalPrice, clearCart } = useCart();
+  const { cartItems, totalPrice, } = useCart();
 
   return {
     addOrderItems: async () => {
@@ -15,6 +15,7 @@ export const useResCart = (): CartAPI => {
           const res = await api.post(ORDERERS_ITEM_URL, {
             product: item.productId, // ✅ correct field name
             quantity: item.quantity,
+            price: item.price,
           });
           return res.data._id;
         }),
@@ -37,13 +38,12 @@ export const useResCart = (): CartAPI => {
       const res = await api.post(ORDERERS_URL, {
         orderItemsId: orderItemIds,
         user,
-        totalPrice: totalPrice,
+        totalPrice: order.totalPrice, // ← use order.totalPrice not totalPrice from context
         phone,
         address,
         customerEmail,
         status: "pending",
       });
-      clearCart();
       return res.data;
     },
 

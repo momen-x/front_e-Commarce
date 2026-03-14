@@ -1,5 +1,6 @@
 import {
   BarcodeIcon,
+  CircleStar,
   HouseIcon,
   Shield,
   ShieldUser,
@@ -9,7 +10,7 @@ import {
 } from "lucide-react";
 
 interface NavHeader {
-  href: "/products" | "/" | "/admin";
+  href: "/products" | "/" | "/admin" |"/orders";
   title: string;
   Icon: LucideIcon;
   className: string;
@@ -19,6 +20,14 @@ export const NavHeaderArray: NavHeader[] = [
   { href: "/", title: "Home", Icon: HouseIcon,className },
   { href: "/products", title: "Products", Icon: BarcodeIcon,className },
 ];
+
+
+export const UserOrderLinks: NavHeader = {
+  href: "/orders",
+  title: "Orders",
+  Icon: CircleStar,
+  className
+}
 
 export const AdminLinks: NavHeader = {
   href: "/admin",

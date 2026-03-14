@@ -9,5 +9,5 @@ export interface IAuthAPI {
   register: (data: registerSchemaInputsType) => Promise<void>;
   logOut: () => Promise<void>;
   forgotPassword: (data: forgotPasswordValidationType) => Promise<void>;
-  resetPassword: (data: resetPasswordValidationType) => Promise<void>;
+  resetPassword: (data: resetPasswordValidationType,id:string,token:string) => Promise<void>;
 }
