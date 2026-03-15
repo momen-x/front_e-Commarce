@@ -35,8 +35,8 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const { mutate: handleLogin, isPending } = useLogin(() => {
     form.reset();
-    navigate({ to: "/" });
-    location.reload();
+    navigate({ to: "/" ,reloadDocument: true});
+
   });
 
   const handleSubmit = (data: loginValidationType) => {

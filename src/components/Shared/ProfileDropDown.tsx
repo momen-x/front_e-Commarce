@@ -35,7 +35,7 @@ export function ProfileDropDown() {
 
   const { mutate: logout, isPending: isLoggingOut } = useLogoutUser(() => {
     localStorage.removeItem("cartItems");
-    navigate({ to: "/login" });
+    navigate({ to: "/login", reloadDocument: true });
     toast.success("Logged out successfully");
   });
 
