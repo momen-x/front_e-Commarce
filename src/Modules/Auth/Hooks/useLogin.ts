@@ -18,6 +18,8 @@ export const useLogin = (
       onSuccess();
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["last-order"] });
+      queryClient.invalidateQueries({ queryKey: ["me"] });
+
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "error logging in");

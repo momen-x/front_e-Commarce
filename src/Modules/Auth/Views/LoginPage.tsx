@@ -34,7 +34,6 @@ const LoginPage = () => {
   });
   const navigate = useNavigate();
   const { mutate: handleLogin, isPending } = useLogin(() => {
-    toast.success("Logged in successfully");
     form.reset();
     navigate({ to: "/" });
     location.reload();
