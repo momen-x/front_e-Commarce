@@ -35,10 +35,10 @@ const CategoryForm = ({
     <div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Product Title */}
+          {/* Category Title */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Product Title
+              Category Title
             </label>
             <ValidationInput<addCategorySchemaType>
               fieldTitle=""
@@ -57,7 +57,7 @@ const CategoryForm = ({
             <ValidationInput<addCategorySchemaType>
               fieldTitle=""
               nameInSchema="description"
-              placeholder="Describe your product features, materials, etc."
+              placeholder="Describe your Category features, materials, etc."
               type="text"
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
             />
