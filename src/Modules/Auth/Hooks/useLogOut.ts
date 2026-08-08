@@ -15,11 +15,12 @@ export const useLogoutUser = (
     mutationFn: () => resAuth.logOut(),
     onSuccess: () => {
       onSuccess();
-      queryClient.invalidateQueries({ queryKey: ["me"] });
+      queryClient.setQueryData(["me"], null);
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "error logging out");
       console.error("the error is : ", error);
+      queryClient.invalidateQueries({ queryKey: ["me"] });
     },
   });
 };

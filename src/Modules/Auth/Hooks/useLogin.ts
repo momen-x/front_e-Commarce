@@ -16,10 +16,8 @@ export const useLogin = (
     mutationFn: (data: loginValidationType) => resAuth.login(data),
     onSuccess: () => {
       onSuccess();
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-      queryClient.invalidateQueries({ queryKey: ["last-order"] });
-      queryClient.invalidateQueries({ queryKey: ["me"] });
-
+      queryClient.invalidateQueries({ queryKey: ["user", "me", "last-order"] });
+ 
     },
     onError: (error) => {
       toast.error(error instanceof Error ? error.message : "error logging in");

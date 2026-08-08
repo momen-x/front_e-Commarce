@@ -1,6 +1,6 @@
-import axios from "axios";
-import { queryClient } from "@/main";
 import { API_DOMAIN } from "@/Utils/domain";
+
+import axios from "axios";
 
 const api = axios.create({
   baseURL: API_DOMAIN,
@@ -9,19 +9,7 @@ const api = axios.create({
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (
-      error.response?.status === 401 &&
-      window.location.pathname !== "/login" &&
-      window.location.pathname.startsWith("/admin")
-    ) {
-      // Clear user cache
-      queryClient.removeQueries({ queryKey: ["me"] });
-      // Redirect to login only for admin pages
-      window.location.href = "/login";
-    }
-    return Promise.reject(error);
-  },
+  (error) => Promise.reject(error),
 );
 
 export default api;
