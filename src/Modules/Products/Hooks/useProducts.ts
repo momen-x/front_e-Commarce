@@ -14,6 +14,7 @@ import type {
 import type { Product } from "../Repo/Products";
 import { resProducts } from "../Repo/resProducts";
 import { toast } from "react-toastify";
+import type { Category } from "@/Modules/Categories/Repo/Category";
 
 const GET_PRODUCTS_QUERY_KEY = "products";
 
@@ -22,21 +23,52 @@ export const useFilteringProductsByCategory = (
   page: number,
   limit?: number,
 ): {
-  products: Product[] | [];
+  data: {
+    success: boolean;
+    count: number;
+    pageCount: number;
+    category: Category;
+    products: Product[];
+  };
   isLoading: boolean;
   isError: boolean;
   error: Error | null;
 } => {
-  const { data, isLoading, isError, error }: UseQueryResult<Product[], Error> =
-    useQuery({
-      queryKey: [GET_PRODUCTS_QUERY_KEY, categoryId, page],
-      queryFn: () => resProducts.filterByCategory(categoryId, page, limit),
-      staleTime: 60 * 1000,
-      retry: 2,
-    });
+  const {
+    data,
+    isLoading,
+    isError,
+    error,
+  }: UseQueryResult<
+    {
+      success: boolean;
+      count: number;
+      pageCount: number;
+      category: Category;
+      products: Product[];
+    },
+    Error
+  > = useQuery({
+    queryKey: [GET_PRODUCTS_QUERY_KEY, categoryId, page],
+    queryFn: () => resProducts.filterByCategory(categoryId, page, limit),
+    staleTime: 60 * 1000,
+    retry: 2,
+  });
 
   return {
-    products: data || [],
+    data: data || {
+      success: false,
+      count: 0,
+      pageCount: 0,
+      category: {
+        id: "",
+        title: "",
+        description: "",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      products: [],
+    },
     isLoading,
     isError,
     error: error || null,

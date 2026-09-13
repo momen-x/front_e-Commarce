@@ -30,7 +30,7 @@ const Index = () => {
   top();
   const [page, setPage] = useState(1);
   const [categoryId, setCategoryId] = useState("All products");
-  const { products, isLoading, error } = useFilteringProductsByCategory(
+  const { data, isLoading, error } = useFilteringProductsByCategory(
     categoryId,
     page,
     8,
@@ -58,7 +58,7 @@ const Index = () => {
   if (isLoading) return <Loading card={8} />;
   if (error) return <ErrorPage />;
 
-  if (products.length === 0 && categoryId === "All products") {
+  if (data.products.length === 0 && categoryId === "All products") {
     return (
       <div className="container mx-auto px-4 py-16">
         <div className="text-center space-y-3">
@@ -92,7 +92,7 @@ const Index = () => {
                 <Button variant="outline" className="rounded-full">
                   {categoryId === "All products"
                     ? "All products"
-                    : (categories.find((c) => c._id === categoryId)?.title ??
+                    : (categories.find((c) => c.id === categoryId)?.title ??
                       "All products")}
                   <ListFilter />
                 </Button>
@@ -113,9 +113,9 @@ const Index = () => {
 
                 {categories.map((category) => (
                   <DropdownMenuItem
-                    key={category._id}
+                    key={category.id}
                     onClick={() => {
-                      setCategoryId(category._id);
+                      setCategoryId(category.id);
                       setPage(1);
                     }}
                     className="cursor-pointer px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"
@@ -134,9 +134,10 @@ const Index = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {products.map((product) => (
-          <ProductCard key={product._id} product={product} />
-        ))}
+        {data.products &&
+          data.products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
       </div>
 
       {/* Hide pagination when a category filter is active */}

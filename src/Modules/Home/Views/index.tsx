@@ -5,6 +5,7 @@ import ProductCard from "../../Products/Views/ProductCard";
 import { FeaturesAboutUsArray, ReviewsArray } from "@/Data/data";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import Loading from "@/Modules/Products/Views/Loading";
 
 const LandingPage = () => {
   useEffect(() => {
@@ -19,8 +20,12 @@ const LandingPage = () => {
     });
   };
 
-  const { products } = useFilteringProductsByCategory("All products", 1, 8);
-  const featuredProducts = products?.slice(0, 3) || [];
+  const { data, isLoading, error } = useFilteringProductsByCategory(
+    "All products",
+    1,
+    8,
+  );
+  const featuredProducts = data.products?.slice(0, 3) || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -232,12 +237,17 @@ const LandingPage = () => {
               <ArrowRight className="size-4" />
             </Button>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredProducts.map((product) => (
-              <ProductCard key={product._id} product={product} />
-            ))}
-          </div>
+          {isLoading ? (
+            <Loading card={4} />
+          ) : error ? (
+            <p className="text-destructive">Error loading products.</p>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

@@ -4,8 +4,9 @@ import type {
   updateProductSchemaType,
 } from "../Validations/Products";
 import api from "@/Utils/axiosInstance";
+import type { Category } from "@/Modules/Categories/Repo/Category";
 
-const BASE_URL  = `/api/products`;
+const BASE_URL = `/api/products`;
 
 export const resProducts: IProductAPI = {
   filterByCategory: async (
@@ -14,27 +15,30 @@ export const resProducts: IProductAPI = {
     limit?: number,
   ) => {
     if (categoryId === "All products") {
-      const response = await api.get(`${BASE_URL }?page=${page}&limit=${limit}`);
+      const response = await api.get<{
+        success: boolean;
+        count: number;
+        pageCount: number;
+        category: Category;
+        products: Product[];
+      }>(`${BASE_URL}?page=${page}&limit=${limit}`);
 
-      const data: Product[] = response.data;
+      const data = response.data;
       return data;
     }
 
-    const response = await api.get(`${BASE_URL }/categories/${categoryId}`);
-    const data: {
+    const response = await api.get<{
       success: boolean;
       count: number;
-      category: {
-        _id: string;
-        title: string;
-        description: string;
-      };
+      pageCount: number;
+      category: Category;
       products: Product[];
-    } = response.data;
-    return data.products;
+    }>(`${BASE_URL}/categories/${categoryId}`);
+    const data = response.data;
+    return data;
   },
   getProductAndPageCount: async () => {
-    const response = await api.get(`${BASE_URL }/count`);
+    const response = await api.get(`${BASE_URL}/count`);
 
     const data: {
       productsCount: number;
@@ -44,7 +48,7 @@ export const resProducts: IProductAPI = {
   },
 
   getById: async (id: string) => {
-    const response = await api.get(`${BASE_URL }/${id}`);
+    const response = await api.get(`${BASE_URL}/${id}`);
 
     const data: Product = response.data;
     return data;
@@ -55,11 +59,11 @@ export const resProducts: IProductAPI = {
     formData.append("title", product.title);
     formData.append("description", product.description);
     formData.append("price", String(product.price));
-    formData.append("categoryId", product.categoryId);
+    formData.append("categoryId", String(product.categoryId));
     if (product.image) {
       formData.append("image", product.image); // key must match "image" in photoUpload.single("image")
     }
-    const response = await api.post(BASE_URL , formData);
+    const response = await api.post(BASE_URL, formData);
     return response.data;
   },
 
@@ -68,16 +72,16 @@ export const resProducts: IProductAPI = {
     formData.append("title", product.title || "");
     formData.append("description", product.description || "");
     formData.append("price", String(product.price));
-    formData.append("categoryId", product.categoryId || "");
+    formData.append("categoryId", String(product.categoryId) || "1");
     if (product.image) {
       formData.append("image", product.image);
     }
-    const response = await api.put(`${BASE_URL }/${id}`, formData);
+    const response = await api.put(`${BASE_URL}/${id}`, formData);
     return response.data;
   },
 
   delete: async (id: string) => {
-    const response = await api.delete(`${BASE_URL }/${id}`);
+    const response = await api.delete(`${BASE_URL}/${id}`);
     return response.data;
   },
 };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from "react-toastify";
 import { useAddProduct } from "@/Modules/Products/Hooks/useProducts";
 import ProductForm from "./ProductForm";
@@ -6,6 +7,9 @@ const AddProducts = () => {
   const { mutate: handleAddProduct, isPending } = useAddProduct(
     () => toast.success("Product added successfully"),
   );
+  const handleSubmit = (data: any) => {
+    handleAddProduct(data);
+  }
 
 
   return (
@@ -16,7 +20,7 @@ const AddProducts = () => {
         </h1>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-8">
           <ProductForm
-            onSubmit={(data) => handleAddProduct(data)}
+            onSubmit={handleSubmit}
             isPending={isPending}
             submitLabel="Add New Product"
 

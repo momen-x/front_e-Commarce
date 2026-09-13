@@ -1,19 +1,18 @@
+import type { Category } from "@/Modules/Categories/Repo/Category";
 import type {
   addProductSchemaType,
   updateProductSchemaType,
 } from "../Validations/Products";
 
 export interface Product {
-  _id: string;
+  id: string;
   title: string;
   description: string;
   price: number;
-  image: {
-    public_id: null | string;
-    url: string;
-  };
-  categoryId: {
-    _id: string;
+  imageUrl: string;
+  imagePublicId: string | null;
+  category: {
+    id: string;
     title: string;
     description: string;
     createdAt: Date;
@@ -28,8 +27,14 @@ export interface IProductAPI {
   filterByCategory: (
     categoryId: string,
     page: number,
-    limit?: number
-  ) => Promise<Product[]>;
+    limit?: number,
+  ) => Promise<{
+    success: boolean;
+    count: number;
+    pageCount: number;
+    category: Category;
+    products: Product[];
+  }>;
   getProductAndPageCount: () => Promise<{
     pageCount: number;
     productsCount: number;

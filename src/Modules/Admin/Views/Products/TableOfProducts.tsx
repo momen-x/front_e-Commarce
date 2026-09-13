@@ -17,13 +17,14 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useEffect, useState } from "react";
+import Loading from "@/Modules/Products/Views/Loading";
 
 const scrollTop = () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
 const TableOfProducts = () => {
-  const { products, error, isLoading } = useFilteringProductsByCategory(
+  const { data, error, isLoading } = useFilteringProductsByCategory(
     "All products",
     1,
     10,
@@ -100,7 +101,11 @@ const TableOfProducts = () => {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                  {products.length === 0 ? (
+                  {isLoading ? (
+                    <Loading card={8} />
+                  ) : error ? (
+                    <p className="text-destructive">Error loading products.</p>
+                  ) : data && data.products.length === 0 ? (
                     <tr>
                       <td colSpan={4} className="px-6 py-12 text-center">
                         <div className="text-gray-500 dark:text-gray-400">
@@ -112,15 +117,15 @@ const TableOfProducts = () => {
                       </td>
                     </tr>
                   ) : (
-                    products.map((product) => (
+                    data.products.map((product) => (
                       <tr
-                        key={product._id}
+                        key={product.id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <div className="max-w-md">
                             <p className="text-gray-800 dark:text-white">
-                              {product._id}
+                              {product.id}
                             </p>
                           </div>
                         </td>
@@ -141,7 +146,7 @@ const TableOfProducts = () => {
                         <td className="px-6 py-4">
                           <div className="flex flex-col">
                             <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {product.categoryId?.title ?? "no category"}
+                              {product.category.title ?? "no category"}
                             </span>
                           </div>
                         </td>
@@ -162,13 +167,13 @@ const TableOfProducts = () => {
                             title="delete product"
                             message="are u sure you want to delete this product"
                             handleSubmit={async () => {
-                              await handleDeleteProduct(product._id.trim());
+                              await handleDeleteProduct(product.id.trim());
                             }}
                           />
                           <UpdateBtn
                             path="/admin/products/$productId"
                             params={"productId"}
-                            paramsId={product._id}
+                            paramsId={product.id}
                           />
                         </td>
                       </tr>

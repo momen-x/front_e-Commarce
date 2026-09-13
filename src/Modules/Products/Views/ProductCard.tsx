@@ -16,20 +16,20 @@ const ProductCard = ({ product }: { product: Product }) => {
     requireAuth("Please log in to add items to your cart", () => {
       toast.success("Item added to cart!");
       addToCart({
-        productId: product._id,
+        productId: product.id,
         title: product.title,
-        price: product.price,
-        image: product.image?.url,
+        price: Number(product.price),
+        image: product.imageUrl,
         quantity: 1,
       });
     });
   };
 
   const imageUrl =
-    product.image?.url ||
+    product.imageUrl ||
     "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=300&fit=crop";
 
-  const formattedPrice = product.price?.toFixed(2) || "99.99";
+  const formattedPrice = Number(product.price)?.toFixed(2) || "99.99";
 
   return (
     <article className="group flex flex-col rounded-lg border border-border bg-card p-3 transition-shadow hover:shadow-md">
@@ -39,7 +39,7 @@ const ProductCard = ({ product }: { product: Product }) => {
         onClick={() => {
           navigate({
             to: "/products/$productId",
-            params: { productId: product._id },
+            params: { productId: product.id },
           });
         }}
       >
@@ -57,7 +57,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           onClick={() => {
             navigate({
               to: "/products/$productId",
-              params: { productId: product._id },
+              params: { productId: product.id },
             });
           }}
         >

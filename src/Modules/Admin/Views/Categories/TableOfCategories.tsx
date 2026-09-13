@@ -9,12 +9,9 @@ import UpdateBtn from "@/components/UpdateBtn";
 
 const TableOfCategories = () => {
   const { categories, error, isLoading } = useGetAllCategories();
-  const { mutate: handleDeleteCategory } = useDeleteCategory(
-    () => {
-      toast.success("category deleted successfully");
-    },
-
-  );
+  const { mutate: handleDeleteCategory } = useDeleteCategory(() => {
+    toast.success("category deleted successfully");
+  });
 
   if (error) {
     return <p>somethings went wrong</p>;
@@ -82,13 +79,13 @@ const TableOfCategories = () => {
                   ) : (
                     categories.map((category) => (
                       <tr
-                        key={category._id}
+                        key={category.id}
                         className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                       >
                         <td className="px-6 py-4">
                           <div className="max-w-md">
                             <p className="text-gray-800 dark:text-white">
-                              {category._id}
+                              {category.id}
                             </p>
                           </div>
                         </td>
@@ -115,7 +112,7 @@ const TableOfCategories = () => {
                               day: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
-                            }
+                            },
                           )}
                         </td>
                         <td className="px-6 py-4">
@@ -123,13 +120,13 @@ const TableOfCategories = () => {
                             title="delete category"
                             message="are u sure you want to delete this category , all products have this category id will deleted too !!!"
                             handleSubmit={async () => {
-                              handleDeleteCategory(category._id.trim());
+                              await handleDeleteCategory(category.id.trim());
                             }}
                           />
                           <UpdateBtn
                             path="/admin/categories/$categoryId"
                             params="categoryId"
-                            paramsId={category._id}
+                            paramsId={category.id}
                           />
                         </td>
                       </tr>

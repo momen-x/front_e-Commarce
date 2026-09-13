@@ -1,25 +1,31 @@
+/* eslint-disable react-hooks/incompatible-library */
+
 import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   addProductSchema,
   type addProductSchemaType,
 } from "@/Modules/Products/Validations/Products";
+
 import ValidationInput from "@/components/Inputs/ValidationInput";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
+
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
+
 import { useGetAllCategories } from "@/Modules/Categories/Hooks/useCategory";
 
 interface ProductFormProps {
   onSubmit: (data: addProductSchemaType) => void;
   isPending: boolean;
-  defaultValues?: Partial<addProductSchemaType>; // ← prefill for update
-  submitLabel?: string; // "Add Product" or "Update Product"
+  defaultValues?: Partial<addProductSchemaType>;
+  submitLabel?: string;
 }
 
 const ProductForm = ({
@@ -30,28 +36,53 @@ const ProductForm = ({
 }: ProductFormProps) => {
   const form = useForm<addProductSchemaType>({
     mode: "onChange",
+
     resolver: zodResolver(addProductSchema) as Resolver<addProductSchemaType>,
+
     defaultValues: {
-      categoryId: "",
+      categoryId: 0,
       description: "",
       price: 0,
       title: "",
       image: undefined,
-      ...defaultValues, // ← override with existing data if updating
+
+      ...defaultValues,
     },
   });
 
   const watchedCategoryId = form.watch("categoryId");
+
   const { categories } = useGetAllCategories();
+
+  const selectedCategory = categories.find(
+    (category) => Number(category.id) === Number(watchedCategoryId),
+  );
+
+  const handleFormSubmit = (data: addProductSchemaType) => {
+    console.log("Form clicked:", data);
+
+    onSubmit(data);
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={form.handleSubmit(
+          handleFormSubmit,
+
+          (errors) => {
+            console.log("FORM VALIDATION ERRORS:", errors);
+          },
+        )}
+        className="space-y-6"
+      >
         {/* Product Title */}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Product Title
           </label>
+
           <ValidationInput<addProductSchemaType>
             fieldTitle=""
             nameInSchema="title"
@@ -62,34 +93,38 @@ const ProductForm = ({
         </div>
 
         {/* Category */}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Category
           </label>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
+                type="button"
                 variant="outline"
                 className="w-full justify-between px-4 py-3 text-left font-normal border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100"
               >
-                {watchedCategoryId
-                  ? categories.find((c) => c._id === watchedCategoryId)?.title
-                  : "Select a category"}
+                {selectedCategory?.title ?? "Select a category"}
+
                 <span className="ml-2">▼</span>
               </Button>
             </DropdownMenuTrigger>
+
             <DropdownMenuContent
               align="start"
               className="w-[var(--radix-dropdown-menu-trigger-width)] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto mt-1"
             >
               {categories.map((category) => (
                 <DropdownMenuItem
-                  key={category._id}
-                  onClick={() =>
-                    form.setValue("categoryId", category._id, {
+                  key={category.id}
+                  onClick={() => {
+                    form.setValue("categoryId", Number(category.id), {
                       shouldValidate: true,
-                    })
-                  }
+                      shouldDirty: true,
+                    });
+                  }}
                   className="cursor-pointer px-4 py-2.5 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-900 dark:text-gray-100"
                 >
                   {category.title}
@@ -97,13 +132,21 @@ const ProductForm = ({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
+
+          {form.formState.errors.categoryId && (
+            <p className="mt-1 text-sm text-red-500">
+              {form.formState.errors.categoryId.message}
+            </p>
+          )}
         </div>
 
         {/* Image */}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Product Image
           </label>
+
           <ValidationInput<addProductSchemaType>
             fieldTitle=""
             nameInSchema="image"
@@ -115,10 +158,12 @@ const ProductForm = ({
         </div>
 
         {/* Description */}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Description
           </label>
+
           <ValidationInput<addProductSchemaType>
             fieldTitle=""
             nameInSchema="description"
@@ -129,10 +174,12 @@ const ProductForm = ({
         </div>
 
         {/* Price */}
+
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Price ($)
           </label>
+
           <ValidationInput<addProductSchemaType>
             fieldTitle=""
             nameInSchema="price"
@@ -145,6 +192,7 @@ const ProductForm = ({
         </div>
 
         {/* Submit */}
+
         <Button
           type="submit"
           disabled={!form.formState.isValid || isPending}

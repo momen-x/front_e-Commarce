@@ -30,10 +30,10 @@ const SingleProduct = () => {
     if (!product) return;
     requireAuth("Please log in to add items to your cart", () => {
       addToCart({
-        productId: product._id,
+        productId: product.id,
         title: product.title,
-        price: product.price,
-        image: product.image?.url ?? "",
+        price: Number(product.price),
+        image: product.imageUrl?? "",
         quantity: quantity,
       });
       toast.success(`${product.title} added to cart!`);
@@ -72,7 +72,7 @@ const SingleProduct = () => {
     );
   }
 
-  const total = (quantity * product.price).toFixed(2);
+  const total = (quantity * Number(product.price)).toFixed(2);
 
   return (
     <div className="min-h-screen bg-background py-6 px-4 sm:px-6 lg:px-8">
@@ -91,7 +91,7 @@ const SingleProduct = () => {
           {/* Image */}
           <div className="aspect-square rounded-xl overflow-hidden bg-muted">
             <img
-              src={product.image?.url}
+              src={product.imageUrl}
               alt={product.title}
               className="w-full h-full object-contain"
             />
@@ -100,9 +100,9 @@ const SingleProduct = () => {
           {/* Details */}
           <div className="flex flex-col">
             {/* Category */}
-            {product.categoryId?.title && (
+            {product.category?.title && (
               <span className="text-sm text-muted-foreground mb-2">
-                {product.categoryId.title}
+                {product.category.title}
               </span>
             )}
 
@@ -113,7 +113,7 @@ const SingleProduct = () => {
 
             {/* Price */}
             <p className="text-3xl font-bold text-foreground mb-6">
-              ${product.price.toFixed(2)}
+              ${Number(product.price).toFixed(2)}
             </p>
 
             {/* Description */}

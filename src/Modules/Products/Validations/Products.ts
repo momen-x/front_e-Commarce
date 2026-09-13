@@ -4,7 +4,7 @@ export const addProductSchema = z.object({
   title: z.string().min(3).max(50),
   description: z.string().min(3),
   price: z.coerce.number().positive(),
-  categoryId: z.string(),
+  categoryId: z.number(),
   image: z.instanceof(File).optional(),
 });
 
@@ -12,7 +12,7 @@ export const updateProductSchema = z.object({
   title: z.string().min(3).max(50).optional(),
   description: z.string().min(3).optional(),
   price: z.coerce.number().positive().optional(),
-  categoryId: z.string().optional(),
+  categoryId: z.number().optional(),
   image: z.instanceof(File).optional(),
 });
 

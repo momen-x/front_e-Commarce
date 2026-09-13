@@ -4,7 +4,7 @@ import type {
 } from "../Validations/category";
 
 export interface Category {
-  _id: string;
+  id: string;
   title: string;
   description: string;
   createdAt: Date;
